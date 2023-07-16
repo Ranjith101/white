@@ -1,0 +1,111 @@
+const dummyData = [
+    {
+      id: 1,
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      mobileNumber: '1234567890',
+      gender: 'Male',
+      dateOfBirth: '1990-01-01',
+      address: '123 Main St, City, Country',
+      course: 'BE',
+      acceptanceOfTerms: true,
+      status: true,
+    },
+    {
+      id: 2,
+      name: 'Jane Smith',
+      email: 'jane.smith@example.com',
+      mobileNumber: '9876543210',
+      gender: 'Female',
+      dateOfBirth: '1995-05-10',
+      address: '456 Elm St, City, Country',
+      course: 'BCA',
+      acceptanceOfTerms: false,
+      status: false,
+    },
+
+    {
+        id: 3,
+        name: 'Rakesh',
+        email: 'rock@mail.com',
+        mobileNumber: '1234567890',
+        gender: 'Male',
+        dateOfBirth: '1990-01-01',
+        address: '123 Main St, City, Country',
+        course: 'BE',
+        acceptanceOfTerms: true,
+        status: true,
+      },
+    {
+      id: 4,
+      name: 'Max Johnson',
+      email: 'max.johnson@example.com',
+      mobileNumber: '5555555555',
+      gender: 'Male',
+      dateOfBirth: '1998-12-25',
+      address: '789 Oak St, City, Country',
+      course: 'MCA',
+      acceptanceOfTerms: true,
+      status: true,
+    },
+    {
+        id: 5,
+        name: 'Daniel',
+        email: 'dan.l@example.com',
+        mobileNumber: '1234567890',
+        gender: 'Male',
+        dateOfBirth: '1990-01-01',
+        address: '123 Main St, City, Country',
+        course: 'BE',
+        acceptanceOfTerms: true,
+        status: true,
+      },
+      {
+        id: 5,
+        name: 'kamail',
+        email: 'akmil@example.com',
+        mobileNumber: '9876543210',
+        gender: 'Female',
+        dateOfBirth: '1995-05-10',
+        address: '456 Elm St, City, Country',
+        course: 'BCA',
+        acceptanceOfTerms: false,
+        status: false,
+      },
+  
+      {
+          id: 6,
+          name: 'Rajesh',
+          email: 'rocj@mail.com',
+          mobileNumber: '1234567890',
+          gender: 'Male',
+          dateOfBirth: '1990-01-01',
+          address: '123 Main St, City, Country',
+          course: 'BE',
+          acceptanceOfTerms: true,
+          status: true,
+        },
+      {
+        id: 8,
+        name: 'Max ',
+        email: 'max.@example.com',
+        mobileNumber: '5555555555',
+        gender: 'Male',
+        dateOfBirth: '1998-12-25',
+        address: '789 Oak St, City, Country',
+        course: 'MCA',
+        acceptanceOfTerms: true,
+        status: true,
+      },
+  ];
+  
+  const addStudent = (studentData) => {
+    const newStudent = {
+      id: Date.now(),
+      ...studentData,
+    };
+    dummyData.push(newStudent);
+  };
+  
+  export { dummyData, addStudent };
+  
