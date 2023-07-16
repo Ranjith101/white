@@ -2,7 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { dummyData, addStudent } from '../utils/data';
 import '../styles/s_page.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt, faEdit, faSearch, faSort } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faSort } from '@fortawesome/free-solid-svg-icons';
+import StudentTable from './StudentTable';
+
 const StudentListPage = () => {
   const [students, setStudents] = useState([]);
   const [formData, setFormData] = useState({
@@ -61,15 +63,22 @@ const StudentListPage = () => {
       status: false,
     });
   };
-  
 
   const handleDeleteStudent = (id) => {
     const updatedStudents = students.filter((student) => student.id !== id);
     setStudents(updatedStudents);
   };
 
+  // const handleUpdateStudent = (student) => {
+  //   setSelectedStudent(student);
+  //   setFormData(student);
+  //   formRef.current.scrollIntoView({ behavior: 'smooth' });
+  // };
+  
   const handleUpdateStudent = (student) => {
-    setSelectedStudent(student);
+    const updatedStudents = students.map((s) => (s.id === student.id ? student : s));
+    setStudents(updatedStudents);
+    setSelectedStudent(null);
     setFormData(student);
     formRef.current.scrollIntoView({ behavior: 'smooth' });
   };
@@ -133,138 +142,58 @@ const StudentListPage = () => {
   );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div className="container">
-    <h2>Student List</h2>
+      <h2>Student List</h2>
 
-    <div className="row mb-3">
-      <div className="col-md-6">
-        <div className="input-group">
-          <span className="input-group-text">
-            <FontAwesomeIcon icon={faSearch} />
-          </span>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search by name, email, or mobile number"
-            value={searchText}
-            onChange={handleSearch}
-          />
+      <div className="row mb-3">
+        <div className="col-md-6 col-6">
+          <div className="input-group">
+            <span className="input-group-text">
+              <FontAwesomeIcon icon={faSearch} />
+            </span>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search by name, email, or mobile number"
+              value={searchText}
+              onChange={handleSearch}
+            />
+          </div>
+        </div>
+
+        <div className="col-md-6 col-6">
+          <div className="input-group">
+            <label className="input-group-text" htmlFor="filterStatus">
+              Filter by Status:
+            </label>
+            <select
+              id="filterStatus"
+              className="form-select"
+              value={filterStatus}
+              onChange={handleFilterStatus}
+            >
+              <option value="All">All</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <div className="col-md-6">
-        <div className="input-group">
-          <label className="input-group-text" htmlFor="filterStatus">
-            Filter by Status:
-          </label>
-          <select
-            id="filterStatus"
-            className="form-select"
-            value={filterStatus}
-            onChange={handleFilterStatus}
-          >
-            <option value="All">All</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
-        </div>
+      <div className="table-responsive">
+        <StudentTable
+          students={currentStudents}
+          sortField={sortField}
+          sortOrder={sortOrder}
+          handleSort={handleSort}
+          handleDeleteStudent={handleDeleteStudent}
+          handleUpdateStudent={handleUpdateStudent}
+        />
       </div>
-    </div>
 
-    <table className="table table-striped">
-      <thead>
-        <tr>
-          <th>
-            <button
-              className={`btn btn-link ${sortField === 'name' ? 'active' : ''}`}
-              onClick={() => handleSort('name')}
-            >
-              Name
-              {sortField === 'name' && (
-                <FontAwesomeIcon
-                  icon={faSort}
-                  className={`ml-1 ${
-                    sortOrder === 'asc' ? 'ascending' : 'descending'
-                  }`}
-                />
-              )}
-            </button>
-          </th>
-          <th>
-            <button
-              className={`btn btn-link ${sortField === 'email' ? 'active' : ''}`}
-              onClick={() => handleSort('email')}
-            >
-              Email
-              {sortField === 'email' && (
-                <FontAwesomeIcon
-                  icon={faSort}
-                  className={`ml-1 ${
-                    sortOrder === 'asc' ? 'ascending' : 'descending'
-                  }`}
-                />
-              )}
-            </button>
-          </th>
-          <th>
-            <button
-              className={`btn btn-link ${
-                sortField === 'mobileNumber' ? 'active' : ''
-              }`}
-              onClick={() => handleSort('mobileNumber')}
-            >
-              Mobile Number
-              {sortField === 'mobileNumber' && (
-                <FontAwesomeIcon
-                  icon={faSort}
-                  className={`ml-1 ${
-                    sortOrder === 'asc' ? 'ascending' : 'descending'
-                  }`}
-                />
-              )}
-            </button>
-          </th>
-          <th>Gender</th>
-          <th>Date of Birth</th>
-          <th>Address</th>
-          <th>Course</th>
-          <th>Terms</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {currentStudents.map((student) => (
-          <tr key={student.id}>
-            <td>{student.name}</td>
-            <td>{student.email}</td>
-            <td>{student.mobileNumber}</td>
-            <td>{student.gender}</td>
-            <td>{student.dateOfBirth}</td>
-            <td>{student.address}</td>
-            <td>{student.course}</td>
-            <td>{student.acceptanceOfTerms ? 'Accepted' : 'Not Accepted'}</td>
-            <td>
-              <span
-                className={`status ${student.status ? 'active' : 'inactive'}`}
-              >
-                {student.status ? 'Active' : 'Inactive'}
-              </span>
-            </td>
-            <td>
-              <button onClick={() => handleDeleteStudent(student.id)}>
-                <FontAwesomeIcon icon={faTrashAlt} />
-              </button>
-              <button onClick={() => handleUpdateStudent(student)}>
-                <FontAwesomeIcon icon={faEdit} />
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-    <nav>
+      <nav>
         <ul className="pagination">
           {Array(Math.ceil(filteredStudents.length / studentsPerPage))
             .fill()
@@ -285,7 +214,8 @@ const StudentListPage = () => {
             ))}
         </ul>
       </nav>
-      <h2>{selectedStudent ? 'Update Student' : 'Add Student'}</h2> 
+
+      <h2>{selectedStudent ? 'Update Student' : 'Add Student'}</h2>
            <form  ref={formRef} onSubmit={handleAddStudent} className="mt-4">
         <div className="mb-3">
           <label htmlFor="name" className="form-label">
