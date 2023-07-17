@@ -29,15 +29,21 @@ const StudentListPage = () => {
   const formRef = useRef(null);
 
   useEffect(() => {
-    setStudents(dummyData);
+    const storedStudents = localStorage.getItem('students');
+    if (storedStudents) {
+      setStudents(JSON.parse(storedStudents));
+    }else{
+      setStudents(dummyData)
+    }
   }, []);
 
   useEffect(() => {
+    localStorage.setItem('students', JSON.stringify(students));
     if (selectedStudent) {
       setFormData(selectedStudent);
       formRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [selectedStudent]);
+  }, [students, selectedStudent]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -49,7 +55,6 @@ const StudentListPage = () => {
     e.preventDefault();
 
     const newStudent = { id: Date.now(), ...formData };
-    addStudent(newStudent);
     setStudents([...students, newStudent]);
     setFormData({
       name: '',
@@ -69,12 +74,6 @@ const StudentListPage = () => {
     setStudents(updatedStudents);
   };
 
-  // const handleUpdateStudent = (student) => {
-  //   setSelectedStudent(student);
-  //   setFormData(student);
-  //   formRef.current.scrollIntoView({ behavior: 'smooth' });
-  // };
-  
   const handleUpdateStudent = (student) => {
     const updatedStudents = students.map((s) => (s.id === student.id ? student : s));
     setStudents(updatedStudents);
@@ -216,7 +215,7 @@ const StudentListPage = () => {
       </nav>
 
       <h2>{selectedStudent ? 'Update Student' : 'Add Student'}</h2>
-           <form  ref={formRef} onSubmit={handleAddStudent} className="mt-4">
+                 <form  ref={formRef} onSubmit={handleAddStudent} className="mt-4">
         <div className="mb-3">
           <label htmlFor="name" className="form-label">
             Name
