@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { dummyData, addStudent } from '../utils/data';
+import { dummyData } from '../utils/data';
 import '../styles/s_page.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faSort } from '@fortawesome/free-solid-svg-icons';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import StudentTable from './StudentTable';
 
 const StudentListPage = () => {
@@ -24,6 +24,7 @@ const StudentListPage = () => {
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
   const [currentPage, setCurrentPage] = useState(1);
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
   const studentsPerPage = 4;
 
   const formRef = useRef(null);
@@ -41,7 +42,7 @@ const StudentListPage = () => {
     localStorage.setItem('students', JSON.stringify(students));
     if (selectedStudent) {
       setFormData(selectedStudent);
-      formRef.current.scrollIntoView({ behavior: 'smooth' });
+      // formRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [students, selectedStudent]);
 
@@ -74,14 +75,36 @@ const StudentListPage = () => {
     setStudents(updatedStudents);
   };
 
-  const handleUpdateStudent = (student) => {
-    const updatedStudents = students.map((s) => (s.id === student.id ? student : s));
+
+  const handleUpdateStudent = (e) => {
+    e.preventDefault();
+
+    const updatedStudent = { ...selectedStudent, ...formData };
+    const updatedStudents = students.map((student) =>
+      student.id === selectedStudent.id ? updatedStudent : student
+    );
+
     setStudents(updatedStudents);
     setSelectedStudent(null);
-    setFormData(student);
-    formRef.current.scrollIntoView({ behavior: 'smooth' });
+    setFormData({
+      name: '',
+      email: '',
+      mobileNumber: '',
+      gender: '',
+      dateOfBirth: '',
+      address: '',
+      course: '',
+      acceptanceOfTerms: false,
+      status: false,
+    });
+    setShowUpdateForm(false);
   };
 
+  const handleShowUpdateForm = (student) => {
+    setSelectedStudent(student);
+    setFormData(student);
+    setShowUpdateForm(true);
+  };
   const handleSearch = (e) => {
     setSearchText(e.target.value);
   };
@@ -132,7 +155,6 @@ const StudentListPage = () => {
     })
   );
 
-  // Pagination Logic
   const indexOfLastStudent = currentPage * studentsPerPage;
   const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
   const currentStudents = filteredStudents.slice(
@@ -188,7 +210,7 @@ const StudentListPage = () => {
           sortOrder={sortOrder}
           handleSort={handleSort}
           handleDeleteStudent={handleDeleteStudent}
-          handleUpdateStudent={handleUpdateStudent}
+          handleUpdateStudent={handleShowUpdateForm}
         />
       </div>
 
@@ -363,6 +385,160 @@ const StudentListPage = () => {
           {selectedStudent ? 'Update Student' : 'Add Student'}
         </button>
       </form>
+      {showUpdateForm && (
+  <div className="update-form-popup">
+    <h2>Update Student</h2>
+    <form onSubmit={handleUpdateStudent}>
+      <div className="mb-3">
+        <label htmlFor="name" className="form-label">
+          Name
+        </label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
+          className="form-control"
+          required
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="email" className="form-label">
+          Email
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
+          className="form-control"
+          required
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="mobileNumber" className="form-label">
+          Mobile Number
+        </label>
+        <input
+          type="tel"
+          id="mobileNumber"
+          name="mobileNumber"
+          value={formData.mobileNumber}
+          onChange={handleInputChange}
+          className="form-control"
+          required
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="gender" className="form-label">
+          Gender
+        </label>
+        <div>
+          <label className="form-check-label">
+            <input
+              type="radio"
+              name="gender"
+              value="Male"
+              checked={formData.gender === 'Male'}
+              onChange={handleInputChange}
+              className="form-check-input"
+              required
+            />
+            Male
+          </label>
+          <label className="form-check-label">
+            <input
+              type="radio"
+              name="gender"
+              value="Female"
+              checked={formData.gender === 'Female'}
+              onChange={handleInputChange}
+              className="form-check-input"
+              required
+            />
+            Female
+          </label>
+        </div>
+      </div>
+      <div className="mb-3">
+        <label htmlFor="dateOfBirth" className="form-label">
+          Date of Birth
+        </label>
+        <input
+          type="date"
+          id="dateOfBirth"
+          name="dateOfBirth"
+          value={formData.dateOfBirth}
+          onChange={handleInputChange}
+          className="form-control"
+          required
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="address" className="form-label">
+          Address
+        </label>
+        <textarea
+          id="address"
+          name="address"
+          value={formData.address}
+          onChange={handleInputChange}
+          className="form-control"
+          required
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="course" className="form-label">
+          Course
+        </label>
+        <select
+          id="course"
+          name="course"
+          value={formData.course}
+          onChange={handleInputChange}
+          className="form-control"
+          required
+        >
+          <option value="">Select Course</option>
+          <option value="BE">BE</option>
+          <option value="BCA">BCA</option>
+          <option value="MCA">MCA</option>
+        </select>
+      </div>
+      <div className="mb-3 form-check">
+        <input
+          type="checkbox"
+          name="acceptanceOfTerms"
+          checked={formData.acceptanceOfTerms}
+          onChange={handleInputChange}
+          className="form-check-input"
+          required
+        />
+        <label className="form-check-label" htmlFor="acceptanceOfTerms">
+          Acceptance of Terms
+        </label>
+      </div>
+      <div className="mb-3 form-check">
+        <input
+          type="checkbox"
+          name="status"
+          checked={formData.status}
+          onChange={handleInputChange}
+          className="form-check-input"
+        />
+        <label className="form-check-label" htmlFor="status">
+          Status
+        </label>
+      </div>
+      <button type="submit" className="btn btn-primary">
+        Update Student
+      </button>
+    </form>
+  </div>
+)}
+
     </div>
   );
 };
